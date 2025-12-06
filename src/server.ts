@@ -5,6 +5,7 @@ import config from "./config";
 import { userRoutes } from "./modules/user/user.routes";
 import { authRoutes } from "./modules/auth/auth.routes";
 import { vehicleRoutes } from "./modules/vehicle/vehicle.routes";
+import { bookingRoutes } from "./modules/booking/booking.router";
 
 const app = express();
 const port = config.port;
@@ -30,6 +31,7 @@ app.use("/api/v1", authRoutes);
 app.use("/api/v1", vehicleRoutes);
 
 // BOOKINGS
+app.use("/api/v1", bookingRoutes);
 
 // not found error handle
 app.use((req: Request, res: Response) => {
