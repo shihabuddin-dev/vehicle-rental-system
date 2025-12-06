@@ -3,13 +3,14 @@ import initDB from "./config/db";
 import logger from "./middleware/logger";
 import config from "./config";
 import { userRoutes } from "./modules/user/user.routes";
+import { authRoutes } from "./modules/auth/auth.routes";
+import { vehicleRoutes } from "./modules/vehicle/vehicle.routes";
 
 const app = express();
 const port = config.port;
 
 // parser (MiddleWare)
 app.use(express.json());
-// app.use(express.urlencoded())
 
 // initializing DB
 initDB();
@@ -18,13 +19,17 @@ app.get("/", logger, (req: Request, res: Response) => {
   res.send("Hello Boss!");
 });
 
-// --users CRUD--
+// CRUD OPERATION API's
+// USERS
 app.use("/api/v1", userRoutes);
 
-// --todos CRUD--
+// AUTH
+app.use("/api/v1", authRoutes);
 
-// --AUTH--
+// VEHICLE
+app.use("/api/v1", vehicleRoutes);
 
+// BOOKINGS
 
 // not found error handle
 app.use((req: Request, res: Response) => {
@@ -36,6 +41,6 @@ app.use((req: Request, res: Response) => {
 });
 
 app.listen(port, () => {
-  console.log(`Example app listening on port ${port}`);
+  console.log(`Server is running on port ${port}`);
 });
 // export default app;
