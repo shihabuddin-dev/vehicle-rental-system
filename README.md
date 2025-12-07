@@ -104,3 +104,9 @@ The API is accessible at `http://localhost:5000/api/v1`.
 -   **Bookings**: `/api/v1/bookings` (POST, GET)
 
 *For a full list of endpoints, please refer to the route files in `src/modules`.*
+
+## Developer Info
+
+-   **Name**: Shihab Uddin
+-   **Website**: [https://shihab-dev.web.app/](https://shihab-dev.web.app/)
+-   **LinkedIn**: [https://shihab-dev.web.app/](https://shihab-dev.web.app/)
