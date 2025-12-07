@@ -38,15 +38,33 @@ const updateSingleVehicle = async (
   payload: Record<string, unknown>,
   id: string
 ) => {
-  const { daily_rent_price, availability_status } = payload;
+  const { vehicle_name, type, registration_number, daily_rent_price, availability_status } = payload;
+
   const result = await pool.query(
-    `UPDATE vehicles SET daily_rent_price=$1, availability_status=$2 WHERE id=$3 RETURNING *`,
-    [daily_rent_price, availability_status, id]
+    `UPDATE vehicles 
+     SET 
+       vehicle_name = COALESCE($1, vehicle_name),
+       type = COALESCE($2, type),
+       registration_number = COALESCE($3, registration_number),
+       daily_rent_price = COALESCE($4, daily_rent_price), 
+       availability_status = COALESCE($5, availability_status) 
+     WHERE id=$6 RETURNING *`,
+    [vehicle_name, type, registration_number, daily_rent_price, availability_status, id]
   );
   return result;
 };
 
 const deleteSingleVehicle = async (id: string) => {
+  // Check for active bookings
+  const bookings = await pool.query(
+    `SELECT * FROM bookings WHERE vehicle_id = $1 AND status = 'active'`,
+    [id]
+  );
+
+  if (bookings.rows.length > 0) {
+    throw new Error("Cannot delete vehicle with active bookings");
+  }
+
   const result = await pool.query(`DELETE FROM vehicles WHERE id=$1`, [id]);
   return result;
 };

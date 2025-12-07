@@ -43,7 +43,27 @@ const getAllUser = async (req: Request, res: Response) => {
 
 const updateUser = async (req: Request, res: Response) => {
   const { userId } = req.params;
+  const user = (req as any).user;
+
   try {
+    // Authorization Check
+    if (user.role === "customer" && Number(user.id) !== Number(userId)) {
+      return res.status(403).json({
+        success: false,
+        message: "You are not authorized to update this user",
+      });
+    }
+
+    // Role Escalation Prevention
+    if (user.role === "customer" && req.body.role && req.body.role !== "customer") {
+      return res.status(403).json({
+        success: false,
+        message: "You cannot update your own role",
+      });
+    }
+
+
+
     const result = await userServices.updateUser(req.body, userId!);
     if (result.rows.length === 0) {
       res.status(404).json({
@@ -51,11 +71,15 @@ const updateUser = async (req: Request, res: Response) => {
         message: "User not found",
       });
     }
-    res.status(200).json({
-      success: true,
-      message: "User updated successfully",
-      data: result.rows[0],
-    });
+
+    // Safety: ensure we return 200 with data if success
+    else {
+      res.status(200).json({
+        success: true,
+        message: "User updated successfully",
+        data: result.rows[0],
+      });
+    }
   } catch (err: any) {
     res.status(500).json({
       success: false,
